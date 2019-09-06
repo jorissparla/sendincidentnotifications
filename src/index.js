@@ -1,5 +1,7 @@
 const { request } = require('graphql-request');
 
+const uri = 'http://nlbavwixs.infor.com:4000';
+
 const query = `query a{
   sev2: backlog(severityname:MAJOR, statusFilter:BACKLOG, productFilters: ["LN"]) {
     incident
@@ -40,13 +42,13 @@ const mutation = `
 `;
 
 async function start() {
-  const result = await request('http://nlbavwixs.infor.com:4000', query);
+  const result = await request(uri, query);
 
   const { sev1, sev2, accounts } = result;
 
   const ar = [...sev1, ...sev2];
 
-  console.log(ar.filter(inc => !inc.service_restored_date));
+  // console.log(ar.filter(inc => !inc.service_restored_date));
   // console.log(sev1);
   const nesev1s = ar.map(inc => {
     let account = accounts.find(acc => acc.navid.toString() === inc.navid.toString());
@@ -85,13 +87,13 @@ async function start() {
 <p><span>&nbsp;</span></p>
 <p><span>In case of questions or when you see you will not be able to fill our commitments, please contact your Manager.</span></p>
 `;
-    // console.log(template);
-    // const result = await request('http://localhost:4000', mutation, {
-    //   address: inc.email,
-    //   subject,
-    //   body
-    // });
-    // console.log(result);
+    console.log(template);
+    const result = await request(uri, mutation, {
+      address: inc.email,
+      subject,
+      body
+    });
+    console.log(result);
   });
 }
 
