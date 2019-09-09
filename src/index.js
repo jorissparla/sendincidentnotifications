@@ -87,7 +87,7 @@ async function start() {
 <p><span>&nbsp;</span></p>
 <p><span>In case of questions or when you see you will not be able to fill our commitments, please contact your Manager.</span></p>
 `;
-    console.log(template);
+    // console.log(template);
     const result = await request(uri, mutation, {
       address: inc.email,
       subject,
