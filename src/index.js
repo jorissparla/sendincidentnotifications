@@ -61,7 +61,7 @@ async function start() {
     const subject = ` Severity 2 notification for incident ${inc.incident} - ${inc.customername}`;
     const body = `
 
-<p><span>Good afternoon, ${inc.owner.split(' ')[0]}!</span></p>
+<p><span>Good morning, ${inc.owner.split(' ')[0]}!</span></p>
 <p><span>You are receiving this email because you have a Severity 2 Incident on your name:</span></p>
 <p><span>&nbsp;</span></p>
 <p><span>Incident ${inc.incident} customer ${inc.customername}</span></p>
