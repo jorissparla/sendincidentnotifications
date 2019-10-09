@@ -11,6 +11,8 @@ const query = `query a{
     summary
     owner
     status
+    lastupdated
+    title
     service_restored_date
     navid
     
@@ -76,6 +78,7 @@ async function start() {
       .replace('{status}', status)
       .replace('{owner}', owner.split(' ')[0])
       .replace('{lastupdated}', lastupdated)
+      .replace('{title}', title)
       .replace('{title}', title);
     const body = html;
     // console.log(body);
