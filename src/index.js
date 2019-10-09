@@ -12,6 +12,7 @@ const query = `query a{
     owner
     status
     lastupdated
+    dayssincelastupdate
     title
     service_restored_date
     navid
@@ -25,6 +26,7 @@ const query = `query a{
     owner
     status
     lastupdated
+    dayssincelastupdate
     title
     service_restored_date
     navid
@@ -67,7 +69,7 @@ async function start() {
     });
   // console.log(nesev1s);
   nesev1s.map(async inc => {
-    const { owner, incident, customername, status, lastupdated, title } = inc;
+    const { owner, incident, customername, status, lastupdated, dayssincelastupdate,title } = inc;
     const subject = ` Severity 2 notification for incident ${incident} - ${customername}`;
 
     const html = emailText
@@ -77,7 +79,7 @@ async function start() {
       .replace('{customer}', customername)
       .replace('{status}', status)
       .replace('{owner}', owner.split(' ')[0])
-      .replace('{lastupdated}', lastupdated)
+      .replace('{lastupdated}', dayssincelastupdate)
       .replace('{title}', title)
       .replace('{title}', title);
     const body = html;
