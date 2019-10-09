@@ -1,4 +1,5 @@
 const { request } = require('graphql-request');
+const fs = require('fs');
 
 const uri = 'http://nlbavwixs.infor.com:4000';
 
