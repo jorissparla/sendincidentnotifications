@@ -18,6 +18,20 @@ const query = `query a{
     navid
     
   }
+  sev2_x: backlog(severityname:MAJOR, statusFilter:BACKLOG, productFilters: ["Xpert", "AutoConnect"]) {
+    incident
+    severityname
+    customername
+    summary
+    owner
+    status
+    lastupdated
+    dayssincelastupdate
+    title
+    service_restored_date
+    navid
+    
+  }
   sev1: backlog(severityname:CRITICAL, productFilters: ["LN"]) {
     incident
     severityname
@@ -51,46 +65,59 @@ const mutation = `
 async function start() {
   const result = await request(uri, query);
 
-  const { sev1, sev2, accounts } = result;
+  const { sev1, sev2, sev2_x, accounts } = result;
 
   const ar = [...sev2];
-
+  const arx = [...sev2_x];
   console.log('----------------------------------');
   const emailText = fs.readFileSync('./MajorImpact.html', 'utf-8');
 
-  const nesev1s = ar
-    .map(inc => ({ ...inc, flag: inc.service_restored_date === null }))
-    .filter(({ incident, owner, flag }) => flag)
-    .map(inc => {
-      let account = accounts.find(acc => acc.navid.toString() === inc.navid.toString());
-      if (!account) {
-        console.log(inc.owner);
-      } else return { ...inc, email: account.email || '' };
-    });
-  // console.log(nesev1s);
-  nesev1s.map(async inc => {
-    const { owner, incident, customername, status, lastupdated, dayssincelastupdate,title } = inc;
-    const subject = ` Severity 2 notification for incident ${incident} - ${customername}`;
+  function mapAndSend(ar, cc = '') {
+    const nesev1s = ar
+      .map(inc => ({ ...inc, flag: inc.service_restored_date === null }))
+      .filter(({ incident, owner, flag }) => flag)
+      .map(inc => {
+        let account = accounts.find(acc => acc.navid.toString() === inc.navid.toString());
+        if (!account) {
+          console.log(inc.owner);
+        } else return { ...inc, email: account.email || '' };
+      });
+    // console.log(nesev1s);
+    nesev1s.map(async inc => {
+      const {
+        owner,
+        incident,
+        customername,
+        status,
+        lastupdated,
+        dayssincelastupdate,
+        title
+      } = inc;
+      const subject = ` Severity 2 notification for incident ${incident} - ${customername}`;
 
-    const html = emailText
-      .replace('{incident}', incident)
-      .replace('{incident}', incident)
-      .replace('{incident}', incident)
-      .replace('{customer}', customername)
-      .replace('{status}', status)
-      .replace('{owner}', owner.split(' ')[0])
-      .replace('{lastupdated}', dayssincelastupdate)
-      .replace('{title}', title)
-      .replace('{title}', title);
-    const body = html;
-    // console.log(body);
-    const result = await request(uri, mutation, {
-      address: inc.email,
-      subject,
-      body
+      const html = emailText
+        .replace('{incident}', incident)
+        .replace('{incident}', incident)
+        .replace('{incident}', incident)
+        .replace('{customer}', customername)
+        .replace('{status}', status)
+        .replace('{owner}', owner.split(' ')[0])
+        .replace('{lastupdated}', dayssincelastupdate)
+        .replace('{title}', title)
+        .replace('{title}', title);
+      const body = html;
+      // console.log(body);
+      const result = await request(uri, mutation, {
+        address: inc.email,
+        subject,
+        body,
+        cc
+      });
+      console.log(result);
     });
-    console.log(result);
-  });
+  }
+  mapAndSend(ar);
+  mapAndSend(arx, 'Marcin.Chojnacki@infor.com;Ludmilla.Kolbowski@infor.com;joris.sparla@infor.com');
 }
 
 start();
