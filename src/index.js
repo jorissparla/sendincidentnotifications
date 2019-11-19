@@ -56,8 +56,8 @@ const query = `query a{
 }`;
 
 const mutation = `
-  mutation SEND_INCIDENT_NOTIFICATION($address: String, $subject: String, $body: String) {
-    sendIncidentNotification(address:$address, subject:$subject, body:$body)
+  mutation SEND_INCIDENT_NOTIFICATION($address: String, $subject: String, $body: String, $cc: String) {
+    sendIncidentNotification(address:$address, subject:$subject, body:$body, $cc:String)
   }
 
 `;
