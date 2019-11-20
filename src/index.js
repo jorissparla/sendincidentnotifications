@@ -57,7 +57,7 @@ const query = `query a{
 
 const mutation = `
   mutation SEND_INCIDENT_NOTIFICATION($address: String, $subject: String, $body: String, $cc: String) {
-    sendIncidentNotification(address:$address, subject:$subject, body:$body, $cc:String)
+    sendIncidentNotification(address:$address, subject:$subject, body:$body, cc:$cc)
   }
 
 `;
@@ -66,6 +66,7 @@ async function start() {
   const result = await request(uri, query);
 
   const { sev1, sev2, sev2_x, accounts } = result;
+  console.log(accounts)
 
   const ar = [...sev2];
   const arx = [...sev2_x];
@@ -79,7 +80,7 @@ async function start() {
       .map(inc => {
         let account = accounts.find(acc => acc.navid.toString() === inc.navid.toString());
         if (!account) {
-          console.log(inc.owner);
+          console.log('owner', inc.owner);
         } else return { ...inc, email: account.email || '' };
       });
     // console.log(nesev1s);
@@ -107,17 +108,29 @@ async function start() {
         .replace('{title}', title);
       const body = html;
       // console.log(body);
-      const result = await request(uri, mutation, {
+      const variables = {
         address: inc.email,
         subject,
-        body,
+        body:'',
         cc
-      });
-      console.log(result);
+      }
+      console.log(variables)
+      try {
+
+        const result = await request(uri, mutation, {
+          address: inc.email,
+          subject,
+          body,
+          cc
+        });
+        console.log(result);
+      } catch (error) {
+        console.log(error)
+      }
     });
   }
-  mapAndSend(ar);
-  mapAndSend(arx, 'Marcin.Chojnacki@infor.com;Ludmilla.Kolbowski@infor.com;joris.sparla@infor.com');
+  mapAndSend(ar, '');
+ mapAndSend(arx, 'Marcin.Chojnacki@infor.com;Ludmilla.Kolbowski@infor.com;joris.sparla@infor.com');
 }
 
 start();
