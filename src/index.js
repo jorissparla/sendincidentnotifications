@@ -130,7 +130,7 @@ async function start() {
     });
   }
   mapAndSend(ar, '');
- mapAndSend(arx, 'Marcin.Chojnacki@infor.com;Ludmilla.Kolbowski@infor.com;joris.sparla@infor.com');
+ mapAndSend(arx, 'Ludmilla.Kolbowski@infor.com;joris.sparla@infor.com');
 }
 
 start();
